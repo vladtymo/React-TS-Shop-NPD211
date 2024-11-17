@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, message, Popconfirm, Space, Table, Tag } from 'antd';
 import type { TableProps } from 'antd';
-import { DeleteFilled, DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import { ProductModel } from '../models/products';
 
 const api = import.meta.env.VITE_PRODUCTS_API;
-
-interface ProductModel {
-    id: number;
-    title: string;
-    price: number;
-    discount: number;
-    quantity: number;
-    imageUrl?: string;
-}
 
 const ProductList: React.FC = () => {
 
@@ -67,7 +60,9 @@ const ProductList: React.FC = () => {
             key: 'action',
             render: (_, i) => (
                 <Space size="middle">
-                    <Button type="text" icon={<InfoCircleOutlined />}></Button>
+                    <Link to={`/details/${i.id}`}>
+                        <Button type="text" icon={<InfoCircleOutlined />}></Button>
+                    </Link>
                     <Popconfirm
                         title="Delete the product"
                         description={`Are you sure to delete ${i.title}?`}
