@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Tag } from 'antd';
+import { Button, message, Popconfirm, Space, Table, Tag } from 'antd';
 import type { TableProps } from 'antd';
+import { DeleteFilled, DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 const api = import.meta.env.VITE_PRODUCTS_API;
 
@@ -13,56 +14,6 @@ interface ProductModel {
     imageUrl?: string;
 }
 
-const columns: TableProps<ProductModel>['columns'] = [
-    {
-        title: 'Image',
-        dataIndex: 'imageUrl',
-        key: 'image',
-        render: (_, i) => <img style={{ height: "42px" }} src={i.imageUrl} alt={i.title}></img>,
-    },
-    {
-        title: 'Title',
-        dataIndex: 'title',
-        key: 'title',
-        render: (text) => <a>{text}</a>,
-    },
-    {
-        title: 'Price',
-        dataIndex: 'price',
-        render: (text) => <span>{text}$</span>,
-    },
-    {
-        title: 'Discount',
-        dataIndex: 'discount',
-        key: 'discount',
-        render: (text) => <span>{text}%</span>,
-    },
-    {
-        title: 'Quantity',
-        dataIndex: 'quantity',
-        key: 'quantity',
-        render: (text, i) =>
-            i.quantity > 0 ?
-                <Tag color="green">
-                    {text}
-                </Tag>
-                :
-                <Tag color="volcano">
-                    Out of Stock
-                </Tag>,
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        render: (_, record) => (
-            <Space size="middle">
-                <a>Show</a>
-                <a>Delete</a>
-            </Space>
-        ),
-    },
-];
-
 const ProductList: React.FC = () => {
 
     const [products, setProducts] = useState<ProductModel[]>();
@@ -72,6 +23,74 @@ const ProductList: React.FC = () => {
             setProducts(data);
         });
     }, []);
+
+    const columns: TableProps<ProductModel>['columns'] = [
+        {
+            title: 'Image',
+            dataIndex: 'imageUrl',
+            key: 'image',
+            render: (_, i) => <img style={{ height: "42px" }} src={i.imageUrl} alt={i.title}></img>,
+        },
+        {
+            title: 'Title',
+            dataIndex: 'title',
+            key: 'title',
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: 'Price',
+            dataIndex: 'price',
+            render: (text) => <span>{text}$</span>,
+        },
+        {
+            title: 'Discount',
+            dataIndex: 'discount',
+            key: 'discount',
+            render: (text) => <span>{text}%</span>,
+        },
+        {
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            render: (text, i) =>
+                i.quantity > 0 ?
+                    <Tag color="green">
+                        {text}
+                    </Tag>
+                    :
+                    <Tag color="volcano">
+                        Out of Stock
+                    </Tag>,
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_, i) => (
+                <Space size="middle">
+                    <Button type="text" icon={<InfoCircleOutlined />}></Button>
+                    <Popconfirm
+                        title="Delete the product"
+                        description={`Are you sure to delete ${i.title}?`}
+                        onConfirm={() => deleteProduct(i.id)}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button type="text" danger icon={<DeleteOutlined />}></Button>
+                    </Popconfirm>
+
+                </Space>
+            ),
+        },
+    ];
+    const deleteProduct = (id: number) => {
+        setProducts(products?.filter(x => x.id !== id));
+        console.log("Deleting...");
+
+        fetch(api + id, { method: "DELETE" }).then(res => {
+            if (res.status === 200)
+                message.success("Product deleted successfully!");
+        });
+    }
 
     return (<Table<ProductModel> columns={columns} dataSource={products} rowKey={i => i.id} />)
 };
