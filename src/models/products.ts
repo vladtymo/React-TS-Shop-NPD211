@@ -8,3 +8,22 @@ export interface ProductModel {
     categoryName?: string;
     description?: string;
 }
+
+export interface ProductFormField {
+    title: string;
+    price: number;
+    discount: number;
+    quantity: number;
+    imageUrl?: string;
+    categoryId: string;
+    description?: string;
+}
+
+export interface CategoryOption {
+    value: number;
+    label: string;
+}
+export interface CategoryModel {
+    id: number;
+    name: string;
+}

@@ -4,6 +4,8 @@ import {
     InfoCircleFilled,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
+    PlusCircleFilled,
+    PlusCircleTwoTone,
     ProductFilled,
     UploadOutlined,
     UserOutlined,
@@ -41,6 +43,11 @@ const AppLayout: React.FC = () => {
                         },
                         {
                             key: '3',
+                            icon: <PlusCircleFilled />,
+                            label: <Link to="/create">Create Product</Link>,
+                        },
+                        {
+                            key: '4',
                             icon: <InfoCircleFilled />,
                             label: <Link to="/about">About</Link>,
                         },
