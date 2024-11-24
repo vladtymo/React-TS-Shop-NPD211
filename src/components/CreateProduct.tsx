@@ -1,11 +1,16 @@
-import { Button, Form, FormProps, Input, InputNumber, message, Select, Space } from 'antd'
+import { Button, Form, FormProps, Input, InputNumber, message, Select, Space, Upload } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { CategoryModel, CategoryOption, ProductFormField } from '../models/products';
-import { LeftOutlined } from '@ant-design/icons';
+import { LeftOutlined, UploadOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const api = import.meta.env.VITE_PRODUCTS_API;
+
+const normFile = (e: any) => {
+    return e?.file.originFileObj;
+};
 
 export default function CreateProduct() {
 
@@ -23,16 +28,15 @@ export default function CreateProduct() {
     }, []);
 
     const onSubmit: FormProps<ProductFormField>['onFinish'] = (item) => {
-
         console.log(item);
 
-        fetch(api, {
-            method: "POST",
-            body: JSON.stringify(item),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        }).then(res => {
+        const data = new FormData();
+
+        for (const key in item) {
+            data.append(key, item[key as keyof ProductFormField] as string | File);
+        }
+
+        axios.post(api, data).then(res => {
             if (res.status === 200) {
                 message.success("Product created successfully!");
                 navigate("/products");
@@ -82,8 +86,13 @@ export default function CreateProduct() {
                 <Form.Item<ProductFormField> label="Description" name="description">
                     <TextArea rows={4} />
                 </Form.Item>
-                <Form.Item<ProductFormField> label="Image" name="imageUrl">
+                {/* <Form.Item<ProductFormField> label="Image" name="imageUrl">
                     <Input />
+                </Form.Item> */}
+                <Form.Item<ProductFormField> label="Image" name="image" valuePropName="file" getValueFromEvent={normFile}>
+                    <Upload maxCount={1}>
+                        <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
                 </Form.Item>
                 <Form.Item
                     wrapperCol={{

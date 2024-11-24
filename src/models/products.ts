@@ -14,7 +14,8 @@ export interface ProductFormField {
     price: number;
     discount: number;
     quantity: number;
-    imageUrl?: string;
+    // imageUrl?: string;
+    image?: File;
     categoryId: string;
     description?: string;
 }
