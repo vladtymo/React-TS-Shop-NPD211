@@ -1,7 +1,7 @@
 import { Button, Form, FormProps, Input, InputNumber, message, Select, Space, Upload } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CategoryModel, CategoryOption, ProductFormField } from '../models/products';
 import { LeftOutlined, UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
@@ -12,10 +12,12 @@ const normFile = (e: any) => {
     return e?.file.originFileObj;
 };
 
-export default function CreateProduct() {
+export default function EditProduct() {
 
     const [categories, setCategories] = useState<CategoryOption[]>([]);
     const navigate = useNavigate();
+    const { id } = useParams();
+    const [form] = Form.useForm<ProductFormField>();
 
     useEffect(() => {
         fetch(api + "categories").then(res => res.json())
@@ -24,21 +26,17 @@ export default function CreateProduct() {
                 setCategories(items.map(x => {
                     return { label: x.name, value: x.id };
                 }));
-            })
+            });
+
+        axios.get(api + id).then(res => form.setFieldsValue(res.data));
     }, []);
 
     const onSubmit: FormProps<ProductFormField>['onFinish'] = (item) => {
         console.log(item);
 
-        const data = new FormData();
-
-        for (const key in item) {
-            data.append(key, item[key as keyof ProductFormField] as string | Blob);
-        }
-
-        axios.post(api, data).then(res => {
+        axios.put(api, item).then(res => {
             if (res.status === 200) {
-                message.success("Product created successfully!");
+                message.success("Product edited successfully!");
                 navigate("/products");
             }
             else
@@ -50,7 +48,7 @@ export default function CreateProduct() {
         <div>
             <Button onClick={() => navigate(-1)} color="default" variant="text" icon={<LeftOutlined />}></Button>
 
-            <h2>Create New Product</h2>
+            <h2>Edit Product</h2>
 
             <Form
                 labelCol={{
@@ -60,8 +58,10 @@ export default function CreateProduct() {
                     span: 19,
                 }}
                 layout="horizontal"
+                form={form}
                 onFinish={onSubmit}
             >
+                <Form.Item hidden name="id"></Form.Item>
                 <Form.Item<ProductFormField> label="Title" name="title"
                     rules={[
                         {
@@ -86,14 +86,14 @@ export default function CreateProduct() {
                 <Form.Item<ProductFormField> label="Description" name="description">
                     <TextArea rows={4} />
                 </Form.Item>
-                {/* <Form.Item<ProductFormField> label="Image" name="imageUrl">
+                <Form.Item<ProductFormField> label="Image" name="imageUrl">
                     <Input />
-                </Form.Item> */}
-                <Form.Item<ProductFormField> label="Image" name="image" valuePropName="file" getValueFromEvent={normFile}>
+                </Form.Item>
+                {/* <Form.Item<ProductFormField> label="Image" name="image" valuePropName="file" getValueFromEvent={normFile}>
                     <Upload maxCount={1}>
                         <Button icon={<UploadOutlined />}>Click to Upload</Button>
                     </Upload>
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item
                     wrapperCol={{
                         offset: 4,
@@ -105,7 +105,7 @@ export default function CreateProduct() {
                             Cancel
                         </Button>
                         <Button type="primary" htmlType="submit">
-                            Create
+                            Edit
                         </Button>
                     </Space>
                 </Form.Item>

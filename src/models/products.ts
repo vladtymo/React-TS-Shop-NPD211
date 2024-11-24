@@ -10,6 +10,7 @@ export interface ProductModel {
 }
 
 export interface ProductFormField {
+    id?: number;
     title: string;
     price: number;
     discount: number;

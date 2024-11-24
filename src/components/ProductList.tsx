@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, message, Popconfirm, Space, Table, Tag } from 'antd';
 import type { TableProps } from 'antd';
-import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { ProductModel } from '../models/products';
 
@@ -62,6 +62,9 @@ const ProductList: React.FC = () => {
                 <Space size="middle">
                     <Link to={`/details/${i.id}`}>
                         <Button type="text" icon={<InfoCircleOutlined />}></Button>
+                    </Link>
+                    <Link to={`/edit/${i.id}`}>
+                        <Button type="text" icon={<EditOutlined />}></Button>
                     </Link>
                     <Popconfirm
                         title="Delete the product"
