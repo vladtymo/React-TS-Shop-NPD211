@@ -41,6 +41,13 @@ export default function CreateProduct() {
                 message.success("Product created successfully!");
                 navigate("/products");
             }
+
+
+        }).catch(err => {
+            if (err.response.data.errors) {
+                const firstErrorKey = Object.keys(err.response.data.errors)[0];
+                message.error(err.response.data.errors[firstErrorKey][0]);
+            }
             else
                 message.error("Something went wrong!");
         });
