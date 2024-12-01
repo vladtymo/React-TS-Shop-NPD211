@@ -6,6 +6,7 @@ import Home from './components/Home'
 import ProductDetails from './components/ProductDetails'
 import CreateProduct from './components/CreateProduct'
 import EditProduct from './components/EditProduct'
+import Login from './components/Login'
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
           <Route path='/details/:id' element={<ProductDetails />} />
           <Route path='/edit/:id' element={<EditProduct />} />
           <Route path='/about' element={<p>About Page!</p>} />
+
+          <Route path='/login' element={<Login />} />
           <Route path='*' element={<p>Not Found!</p>} />
         </Route>
       </Routes>

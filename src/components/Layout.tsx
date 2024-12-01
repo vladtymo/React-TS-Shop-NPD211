@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import {
     HomeFilled,
     InfoCircleFilled,
+    LoginOutlined,
+    LogoutOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     PlusCircleFilled,
-    PlusCircleTwoTone,
     ProductFilled,
-    UploadOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
 import { Link, Outlet } from 'react-router-dom';
+import { accountService } from '../services/accounts.service';
+import { useAccountContext } from '../contexts/account.context';
 
 const { Header, Sider, Content } = Layout;
 
@@ -21,6 +21,13 @@ const AppLayout: React.FC = () => {
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+
+    const logout = () => {
+        accountService.logout();
+        clear();
+    }
+
+    const { email, isAuth, clear } = useAccountContext();
 
     return (
         <Layout className='Layout'>
@@ -55,7 +62,7 @@ const AppLayout: React.FC = () => {
                 />
             </Sider>
             <Layout>
-                <Header style={{ padding: 0, background: colorBgContainer }}>
+                <Header style={{ padding: 0, background: colorBgContainer, display: "flex", justifyContent: "space-between" }}>
                     <Button
                         type="text"
                         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -66,6 +73,37 @@ const AppLayout: React.FC = () => {
                             height: 64,
                         }}
                     />
+                    {
+                        isAuth()
+                            ?
+                            <>
+                                <span>Hello, {email}</span>
+                                <Button
+                                    type="text"
+                                    icon={<LogoutOutlined />}
+                                    onClick={logout}
+                                    style={{
+                                        fontSize: '16px',
+                                        // width: 64,
+                                        height: 64,
+                                    }}>
+                                    Logout
+                                </Button>
+                            </>
+                            :
+                            <Link to="/login">
+                                <Button
+                                    type="text"
+                                    icon={<LoginOutlined />}
+                                    style={{
+                                        fontSize: '16px',
+                                        // width: 64,
+                                        height: 64,
+                                    }}>
+                                    Login
+                                </Button>
+                            </Link>
+                    }
                 </Header>
                 <Content
                     style={{
